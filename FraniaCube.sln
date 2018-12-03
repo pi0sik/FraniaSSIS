@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.15
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D2ABAB84-BF74-430A-B69E-9DC6D40DDA17}") = "dged_s416149(MSSQL-2016)", "<Server=mssql-2016.labs.wmi.amu.edu.pl;Database=dged_s416149;>", "{10AEFD4A-E9BA-42D0-98CF-DDEA72B1F59A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10AEFD4A-E9BA-42D0-98CF-DDEA72B1F59A}.Development|Default.ActiveCfg = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {21CA372A-AC2E-4375-B274-22D651C496A4}
+	EndGlobalSection
+EndGlobal
