@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.15
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "FraniaSSIS", "FraniaSSIS\FraniaSSIS.dtproj", "{4BC69594-0A49-445E-8934-37383804BE1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4BC69594-0A49-445E-8934-37383804BE1B}.Development|Default.ActiveCfg = Development
+		{4BC69594-0A49-445E-8934-37383804BE1B}.Development|Default.Build.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A8C8093-D373-4D99-98BA-9426F5CB5338}
+	EndGlobalSection
+EndGlobal
