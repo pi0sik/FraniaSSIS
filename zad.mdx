@@ -1,0 +1,34 @@
+/*SELECT [Measures].[ilosc] ON COLUMNS,
+[Klienci].[Klient].[Klient] ON ROWS
+FROM [FraniaCube]
+WHERE [Czas].[Rok].&[2005];
+//łączenie plastrów w klauzuli WHERE łączymy warunki oddzielając przecinkiem i okalając nawaisami ()  "X"
+// cięcie plasta po warunkach łączonych z jednego wymiaru używamy hierarchi 
+// {} dodajemy do definicji osi
+// uzywamy (a.b),(a.c) żeby wybrać dwa fragmenty tej samej miary  "|  |"
+// dodajac zamiast ostatniego wezla members to doda all na ppoczatku
+
+//ZADANIE 1
+SELECT {([Measures].[Obrot]),([Measures].[Ilosc])} ON COLUMNS,
+ [Regiony].[Region].MEMBERS ON ROWS
+FROM [FraniaCube]
+WHERE ([Towary].[Podgrupa].&[okapy],[Czas].[Hierarchy].[Rok].&[2006].&[2])
+
+//ZADANIE 2
+SELECT [Czas].[Hierarchy].[Rok].&[2006].&[1].&[1]:[Czas].[Hierarchy].[Rok].&[2006].&[2].&[4]  ON COLUMNS,
+ [Towary].[Hierarchy].[Grupa].&[BI].&[okapy].children ON ROWS
+FROM [FraniaCube]
+where [Measures].[Ilosc];
+
+
+//ZADANIE3
+*/
+SELECT [Measures].[Ilosc] ON COLUMNS,
+{
+ ORDER(NONEMPTYCROSSJOIN([Towary].[Hierarchy].[Grupa],[Regiony].[Region].[Region]),[Measures].[Ilosc], DESC)
+} ON ROWS
+FROM [FraniaCube]
+WHERE ([Towary].[Podgrupa].&[zmywarki],[Czas].[Hierarchy].[Rok].&[2007])
+
+
+// zad4
