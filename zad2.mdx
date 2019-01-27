@@ -1,0 +1,110 @@
+SELECT [Measures].[Measures].[Ilosc - Sprzedaz Hist] ON COLUMNS,
+[Klienci].[Klient].[Klient] ON ROWS
+FROM [FraniaDSV]
+WHERE [Czas].[Rok].&[2005];
+//³¹czenie plastrów w klauzuli WHERE ³¹czymy warunki oddzielaj¹c przecinkiem i okalaj¹c nawaisami ()  "X"
+// ciêcie plasta po warunkach ³¹czonych z jednego wymiaru u¿ywamy hierarchi 
+// {} dodajemy do definicji osi
+// uzywamy (a.b),(a.c) ¿eby wybraæ dwa fragmenty tej samej miary  "|  |"
+// dodajac zamiast ostatniego wezla members to doda all na ppoczatku
+
+--ZADANIE 1
+SELECT {([Measures].[Obrot - Sprzedaz Hist]),([Measures].[Ilosc - Sprzedaz Hist])} ON COLUMNS,
+ [Regiony].[Region].MEMBERS ON ROWS
+FROM [FraniaDSV]
+WHERE ([Towary].[Podgrupa].&[okapy],[Czas].[Hierarchy].[Rok].&[2006].&[2])
+
+--ZADANIE 2
+SELECT [Czas].[Hierarchy].[Rok].&[2006].&[1].&[1]:[Czas].[Hierarchy].[Rok].&[2006].&[2].&[4]  ON COLUMNS,
+ [Towary].[Hierarchy].[Grupa].&[BI].&[okapy].children ON ROWS
+FROM [FraniaDSV]
+where [Measures].[Ilosc - Sprzedaz Hist];
+
+
+--ZADANIE3
+
+SELECT [Measures].[Ilosc] ON COLUMNS,
+{
+ ORDER(NONEMPTYCROSSJOIN([Towary].[Hierarchy].[Grupa],[Regiony].[Region].[Region]),[Measures].[Ilosc], DESC)
+} ON ROWS
+FROM [FraniaDSV]
+WHERE ([Towary].[Podgrupa].&[zmywarki],[Czas].[Hierarchy].[Rok].&[2007])
+
+
+--ZADANIE 4
+
+WITH 
+	SET [zbior klientow] AS '{[Klienci].[Klient].&[AVANS],[Klienci].[Klient].&[MEDIA MARKT]}'
+	MEMBER [Klienci].[Klient].[Zagregowane] AS 'AGGREGATE([zbior klientow])'
+	MEMBER [Wartosc] as ' [Measures].[Ilosc - Sprzedaz Hist]*[Measures].[Cena - Sprzedaz Hist]'
+SELECT [Measures].[Wartosc] ON COLUMNS,
+{[zbior klientow],[Zagregowane]} ON ROWS
+FROM [FraniaDSV]
+
+
+--ZADANIE 5 
+WITH 
+	MEMBER [Measures].[max] AS 'MAX({[Regiony].[Region].[Region]}, [Measures].[Ilosc])'
+SELECT [Measures].[Ilosc] ON COLUMNS,
+{
+FILTER({ORDER(NONEMPTYCROSSJOIN([Towary].[Hierarchy].[Grupa],[Regiony].[Region].[Region]),[Measures].[Ilosc], DESC)},  [Measures].[Ilosc] = [Measures].[max] )
+} ON ROWS
+FROM [FraniaDSV]
+WHERE ([Towary].[Podgrupa].&[zmywarki],[Czas].[Hierarchy].[Rok].&[2007])
+
+
+--ZADANIE 6 
+
+
+WITH
+	MEMBER [Measures].[IloscCalosc] AS '([Measures].[Obrot], [Towary].[Podgrupa].[All])'
+	MEMBER [Measures].[IloscProcentowo] AS '[Measures].[Obrot]/[Measures].[IloscCalosc]',
+	FORMAT_STRING= 'Percent'
+SELECT {[Measures].[Obrot],
+
+		   [Measures].[IloscProcentowo]} on columns,
+ [Towary].[Podgrupa].[Podgrupa] on rows
+FROM [FraniaDSV]
+
+--ZADANIE 7
+
+WITH
+	MEMBER measures.podgrupa as '[Towary].[Hierarchy].currentmember.Parent.Name'
+    MEMBER measures.grupa as '[Towary].[Hierarchy].currentmember.Parent.Parent.Name'
+SELECT {measures.podgrupa,measures.grupa} on columns,
+[Towary].[Hierarchy].[Towar] on rows
+FROM [FraniaDSV];
+
+--ZADANIE 8
+
+WITH
+	MEMBER [Measures].[podgrupa] as '([Measures].[Obrot], [Towary].[Hierarchy].currentmember.Parent)'
+    MEMBER [Measures].[grupa] as '([Measures].[Obrot], [Towary].[Hierarchy].currentmember.Parent.Parent)'
+	MEMBER [Measures].[IloscCalosc] AS '([Measures].[Obrot], [Towary].[Hierarchy].[All])'
+	MEMBER [Measures].[Udzia³Podgrupa] AS '([Measures].[Obrot]/[Measures].[podgrupa])', FORMAT_STRING= 'Percent'
+	MEMBER [Measures].[Udzia³Grupa] AS '([Measures].[Obrot]/[Measures].[grupa])', FORMAT_STRING= 'Percent'
+	MEMBER [Measures].[Udzia³Rynek] AS '([Measures].[Obrot]/[Measures].[IloscCalosc])', FORMAT_STRING= 'Percent'
+SELECT {[Measures].[Udzia³Podgrupa],[Measures].[Udzia³Grupa],[Measures].[Udzia³Rynek]} on columns,
+[Towary].[Hierarchy].[Towar] on rows
+FROM [FraniaDSV];
+
+--ZADANIE 9
+
+WITH
+	MEMBER [Regiony].[Region].[Najlepsi-suma] AS 'AGGREGATE({TOPCOUNT([Regiony].[Region].[Region], 3, [Measures].[Ilosc])})'
+	MEMBER [Regiony].[Region].[Reszta-suma] AS 'AGGREGATE({EXCEPT([Regiony].[Region].[Region],TOPCOUNT([Regiony].[Region].[Region], 3, [Measures].[Ilosc]))})'
+SELECT [Measures].[Ilosc] ON COLUMNS,
+{[Regiony].[Region].[Region],[Regiony].[Region].[Najlepsi-suma],[Regiony].[Region].[Reszta-suma]} ON ROWS
+FROM [FraniaDSV]
+
+
+--ZADANIE 10
+
+WITH
+	MEMBER [Measures].[Akumulacja] AS 'Sum(YTD(),[Measures].[Ilosc])'
+	SELECT {[Measures].[Ilosc],[Measures].[Akumulacja]} ON COLUMNS,
+([Klienci].[Klient].[Klient], [Czas].[Hierarchy].[Rok].&[2006].Children) ON ROWS
+FROM [FraniaDSV]
+
+
+
